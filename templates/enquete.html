@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>MamaDoc — Enquête Terrain</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F4F7F5;min-height:100vh}
+.app{max-width:480px;margin:0 auto;padding:12px 12px 40px}
+.header{background:#1B7A4A;color:#fff;border-radius:14px;padding:16px;margin-bottom:14px}
+.header h1{font-size:20px;font-weight:600}
+.header p{font-size:13px;opacity:.8;margin-top:3px}
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tab{padding:8px 14px;border-radius:20px;border:1.5px solid #1B7A4A;background:#fff;font-size:13px;cursor:pointer;color:#1B7A4A;font-weight:500}
+.tab.active{background:#1B7A4A;color:#fff}
+.progress-wrap{background:#E0EDE7;border-radius:4px;height:5px;margin-bottom:14px}
+.progress-bar{background:#1B7A4A;border-radius:4px;height:5px;transition:width .3s}
+.section-title{font-size:13px;font-weight:600;color:#fff;background:#1B7A4A;padding:9px 13px;border-radius:9px;margin:14px 0 9px}
+.question-block{background:#fff;border:1px solid #D6EAE0;border-radius:12px;padding:13px;margin-bottom:10px}
+.q-label{font-size:11px;color:#888;margin-bottom:3px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.q-text{font-size:14px;color:#1a1a1a;font-weight:500;margin-bottom:7px;line-height:1.5}
+.q-hint{font-size:12px;color:#888;margin-bottom:8px;font-style:italic;background:#F9F9F9;padding:5px 8px;border-radius:6px}
+textarea{width:100%;border:1.5px solid #D6EAE0;border-radius:9px;padding:9px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;background:#FAFFFE;color:#1a1a1a}
+textarea:focus{outline:none;border-color:#1B7A4A}
+.info-block{background:#fff;border:1px solid #D6EAE0;border-radius:12px;padding:13px;margin-bottom:12px}
+.info-field{margin-bottom:11px}
+.info-field:last-child{margin-bottom:0}
+.info-label{font-size:12px;color:#555;font-weight:500;margin-bottom:5px}
+.info-field input{width:100%;border:1.5px solid #D6EAE0;border-radius:8px;padding:9px 11px;font-size:14px;font-family:inherit;background:#FAFFFE;color:#1a1a1a}
+.info-field input:focus{outline:none;border-color:#1B7A4A}
+.radio-group{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.radio-btn{padding:6px 12px;border-radius:20px;border:1.5px solid #D6EAE0;font-size:13px;cursor:pointer;background:#fff;color:#555;font-family:inherit}
+.radio-btn.selected{background:#E8F5EE;border-color:#1B7A4A;color:#0D3D25;font-weight:500}
+.score-group{display:flex;gap:10px;margin-top:5px}
+.score-btn{width:40px;height:40px;border-radius:50%;border:1.5px solid #D6EAE0;font-size:15px;cursor:pointer;background:#fff;color:#555;font-family:inherit;font-weight:500}
+.score-btn.selected{background:#1B7A4A;color:#fff;border-color:#1B7A4A}
+.nav{display:flex;gap:8px;margin-top:16px}
+.btn{flex:1;padding:13px;border-radius:11px;border:none;font-size:15px;cursor:pointer;font-family:inherit;font-weight:600}
+.btn-primary{background:#1B7A4A;color:#fff}
+.btn-secondary{background:#fff;color:#1B7A4A;border:1.5px solid #1B7A4A}
+.btn-success{background:#0D3D25;color:#fff}
+.result-card{background:#E8F5EE;border:1.5px solid #1B7A4A;border-radius:12px;padding:16px;margin-top:10px}
+.result-card h3{color:#0D3D25;font-size:16px;margin-bottom:10px;font-weight:600}
+.result-row{font-size:13px;color:#1B7A4A;padding:5px 0;border-bottom:1px solid #C5E8D5}
+.result-row:last-child{border:none}
+.badge{display:inline-block;background:#1B7A4A;color:#fff;font-size:11px;padding:2px 9px;border-radius:10px;margin-left:6px;font-weight:500}
+.note-box{background:#FFF8E1;border-left:4px solid #FFC107;border-radius:0 9px 9px 0;padding:10px 12px;font-size:13px;color:#555;margin:10px 0;line-height:1.5}
+.status-box{border-radius:10px;padding:12px;margin-top:10px;font-size:13px;text-align:center;font-weight:500}
+.status-ok{background:#E8F5EE;color:#0D3D25;border:1px solid #1B7A4A}
+.status-err{background:#FFF0F0;color:#C0392B;border:1px solid #E74C3C}
+.status-loading{background:#F0F0F0;color:#555;border:1px solid #DDD}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>MamaDoc — Enquête Terrain</h1>
+    <p id="guide-subtitle">Sélectionne un guide pour commencer</p>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="selectGuide(0)">Mamans</button>
+    <button class="tab" onclick="selectGuide(1)">Sages-Femmes</button>
+    <button class="tab" onclick="selectGuide(2)">Pharmaciens</button>
+  </div>
+  <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+  <div id="content"></div>
+</div>
+<script>
+const API_URL='http://127.0.0.1:8000/api/enquetes/soumettre/';
+const guides=[{name:"Mamans",subtitle:"Guide Mamans — Conakry 2026",info:[{label:"Date",key:"date",type:"input",placeholder:"Ex: 11/04/2026"},{label:"Quartier / Commune",key:"quartier",type:"input",placeholder:"Ex: Ratoma, Matam..."},{label:"Profil de la maman",key:"profil",type:"radio",options:["Enceinte","Enfant 0-5 ans","Les deux"]},{label:"Type de téléphone",key:"tel",type:"radio",options:["Smartphone","Téléphone basique","Aucun"]}],sections:[{title:"Partie 1 — Quotidien santé",questions:[{q:"Quand vous ou votre enfant êtes malades, que faites-vous en premier ?",hint:"Laisser parler librement — ne pas influencer"},{q:"La dernière fois que vous avez eu besoin d'une sage-femme, comment ça s'est passé ?"},{q:"Avez-vous déjà annulé ou reporté une consultation médicale ? Pour quelle raison ?",hint:"Distance, argent, temps, transport..."}]},{title:"Partie 2 — Médicaments",questions:[{q:"Après une ordonnance, avez-vous déjà eu du mal à trouver le médicament prescrit ?"},{q:"Un outil qui montre quelle pharmacie proche a votre médicament en stock — ça vous aiderait ?",hint:"Observer la réaction — enthousiaste ou indifférente ?"}]},{title:"Partie 3 — Carnet de santé",questions:[{q:"Vous avez un carnet de santé ? Où le gardez-vous ?"},{q:"Avez-vous déjà perdu ou oublié le carnet lors d'une consultation ?"},{q:"Les vaccins de votre enfant sont à jour ? Comment vous vous en souvenez ?"}]},{title:"Partie 4 — Urgences",questions:[{q:"La nuit ou le weekend, si vous avez une urgence médicale — comment vous faites pour aller à la maternité ?"},{q:"Une maman de votre entourage a-t-elle eu un problème de transport lors d'un accouchement ?",hint:"Laisser raconter — les histoires vraies sont précieuses"}]},{title:"Partie 5 — Numérique",questions:[{q:"Vous utilisez WhatsApp ? Combien de fois par jour à peu près ?"},{q:"Une sage-femme disponible par message ou appel vidéo depuis chez vous — vous utiliseriez ?",hint:"Observer les doutes : confiance, connexion internet..."},{q:"Combien payez-vous actuellement pour une consultation médicale ?"},{q:"Seriez-vous prête à payer 5 000 GNF/mois pour accéder à une sage-femme par téléphone à tout moment ?",hint:"Ne pas forcer — noter l'hésitation ou l'enthousiasme"}]},{title:"Partie 6 — Clôture",questions:[{q:"Si vous pouviez améliorer l'accès à la santé pour les mamans guinéennes — vous changez quoi en premier ?",hint:"Noter mot pour mot si possible"}]}],closing:[{label:"Intéressée pour être beta-testeuse ?",key:"beta",type:"radio",options:["Oui","Non","Peut-être"]},{label:"Contact WhatsApp",key:"contact",type:"input",placeholder:"+224..."},{label:"Score de motivation (/5)",key:"score",type:"score"},{label:"Observations personnelles",key:"obs",type:"textarea"}]},{name:"Sages-Femmes",subtitle:"Guide Sages-Femmes — Conakry 2026",info:[{label:"Date",key:"date",type:"input",placeholder:"Ex: 11/04/2026"},{label:"Structure de travail",key:"structure",type:"radio",options:["Hôpital public","Clinique privée","Cabinet","Indépendante"]},{label:"Années d'expérience",key:"exp",type:"input",placeholder:"Ex: 8 ans"},{label:"Smartphone disponible ?",key:"tel",type:"radio",options:["Oui","Non"]}],sections:[{title:"Partie 1 — Quotidien professionnel",questions:[{q:"Combien de patientes voyez-vous en consultation par jour en moyenne ?"},{q:"Quelles sont les 3 raisons pour lesquelles une maman arrive trop tard à la maternité ?",hint:"Ne pas suggérer — laisser lister librement"},{q:"Qu'est-ce qui vous frustre le plus dans votre travail aujourd'hui ?"}]},{title:"Partie 2 — Télémédecine",questions:[{q:"Avez-vous déjà répondu à des questions médicales par WhatsApp à des patientes ?",hint:"Presque toutes le font — valider et explorer"},{q:"Consultations à distance rémunérées depuis chez vous — qu'est-ce qui vous intéresserait ou vous dérangerait ?"},{q:"Quels symptômes peuvent être gérés à distance et lesquels nécessitent une consultation physique ?",hint:"Question clé pour le protocole médical MamaDoc"}]},{title:"Partie 3 — Rémunération",questions:[{q:"20 000 à 50 000 GNF par consultation à distance — c'est motivant pour vous ?",hint:"Observer si elle veut négocier"},{q:"Combien d'heures par semaine pourriez-vous consacrer à MamaDoc en dehors de votre travail principal ?"}]},{title:"Partie 4 — Protocoles médicaux",questions:[{q:"Une IA répond en premier pour trier les symptômes avant de vous passer la main — vous êtes à l'aise avec ça ?"},{q:"Quelles sont les limites absolues de la télémédecine maternelle ? Où est la ligne rouge ?",hint:"Essentiel pour la charte médicale — noter mot pour mot"}]},{title:"Partie 5 — Clôture",questions:[{q:"Si MamaDoc existait aujourd'hui, seriez-vous prête à rejoindre comme sage-femme partenaire ?"},{q:"Connaissez-vous d'autres sages-femmes qui pourraient être intéressées ? Pouvez-vous nous les présenter ?"}]}],closing:[{label:"Intérêt à rejoindre MamaDoc ?",key:"interet",type:"radio",options:["Très intéressée","Intéressée","Peu intéressée","Non"]},{label:"Contact WhatsApp",key:"contact",type:"input",placeholder:"+224..."},{label:"Profil coordinatrice ?",key:"coord",type:"radio",options:["Oui","Non","À évaluer"]},{label:"Score de motivation (/5)",key:"score",type:"score"},{label:"Observations personnelles",key:"obs",type:"textarea"}]},{name:"Pharmaciens",subtitle:"Guide Pharmaciens — Conakry 2026",info:[{label:"Date",key:"date",type:"input",placeholder:"Ex: 11/04/2026"},{label:"Nom de la pharmacie",key:"nom",type:"input",placeholder:"..."},{label:"Quartier / Commune",key:"quartier",type:"input",placeholder:"Ex: Kaloum, Dixinn..."},{label:"Gestion du stock",key:"stock",type:"radio",options:["Logiciel","Excel","Manuel / Papier"]}],sections:[{title:"Partie 1 — Quotidien",questions:[{q:"Combien de clients passent dans votre pharmacie par jour en moyenne ?"},{q:"Quelle proportion repart sans avoir trouvé le médicament cherché, selon vous ?"},{q:"Vous envoyez parfois un client vers une autre pharmacie ? Comment vous savez où l'envoyer ?"}]},{title:"Partie 2 — PharmaMama",questions:[{q:"Une maman vous envoie une photo d'ordonnance par WhatsApp pour vérifier si vous avez le médicament — ça vous arrive ?"},{q:"Une app montre aux mamans quelle pharmacie proche a leur médicament en stock — votre réaction ?",hint:"Observer réaction commerciale ou méfiante"},{q:"Comment gérez-vous votre stock aujourd'hui ? Vous avez une liste numérique ?",hint:"Question technique clé pour l'intégration"},{q:"Prêt à partager votre stock en temps réel si on vous aide à le numériser gratuitement ?"}]},{title:"Partie 3 — Modèle économique",questions:[{q:"MamaDoc vous envoie des clientes directement grâce à l'app — c'est un avantage pour vous ?"},{q:"Abonnement entre 100 000 et 300 000 GNF/mois pour être listé en priorité — vous seriez prêt ?",hint:"Observer la réaction au chiffre — ne pas défendre"},{q:"Quels médicaments maternité / pédiatrie avez-vous le plus souvent en rupture de stock ?",hint:"Données précieuses pour l'algorithme PharmaMama"}]},{title:"Partie 4 — Clôture",questions:[{q:"Pilote avec 5 pharmacies à Conakry dans 2 mois — vous êtes partant ?"},{q:"D'autres pharmaciens dans votre réseau pourraient être intéressés par ce partenariat ?"}]}],closing:[{label:"Intérêt partenariat ?",key:"interet",type:"radio",options:["Très intéressé","Intéressé","Peu intéressé","Non"]},{label:"Stock numérique existant ?",key:"num",type:"radio",options:["Oui","Non","Partiel"]},{label:"Contact WhatsApp",key:"contact",type:"input",placeholder:"+224..."},{label:"Score de motivation (/5)",key:"score",type:"score"},{label:"Observations personnelles",key:"obs",type:"textarea"}]}];
+
+let cG=0,cS=0,answers={},infoData={},closingData={};
+function selectGuide(i){cG=i;cS=0;answers={};infoData={};closingData={};document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',j===i));document.getElementById('guide-subtitle').textContent=guides[i].subtitle;render();}
+function total(){return 2+guides[cG].sections.length;}
+function updateProgress(){document.getElementById('progress-bar').style.width=Math.round((cS/total())*100)+'%';}
+function render(){updateProgress();const g=guides[cG],c=document.getElementById('content');if(cS===0)renderInfo(g,c);else if(cS<=g.sections.length)renderSection(g,g.sections[cS-1],c);else if(cS===g.sections.length+1)renderClosing(g,c);else renderSummary(g,c);window.scrollTo(0,0);}
+function renderInfo(g,c){let h='<div class="note-box">Remplis les informations de base avant de commencer l\'entretien.</div><div class="info-block">';g.info.forEach(f=>{h+=`<div class="info-field"><div class="info-label">${f.label}</div>`;if(f.type==='input'){h+=`<input type="text" value="${infoData[f.key]||''}" placeholder="${f.placeholder||''}" oninput="infoData['${f.key}']=this.value">`;}else if(f.type==='radio'){h+=`<div class="radio-group">`;f.options.forEach(o=>{const s=infoData[f.key]===o?'selected':'';h+=`<button class="radio-btn ${s}" onclick="pickInfo('${f.key}','${o}',this)">${o}</button>`;});h+=`</div>`;}h+=`</div>`;});h+=`</div><div class="nav"><button class="btn btn-primary" onclick="next()">Commencer l'entretien →</button></div>`;c.innerHTML=h;}
+function pickInfo(k,v,el){infoData[k]=v;el.closest('.radio-group').querySelectorAll('.radio-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');}
+function renderSection(g,sec,c){let h=`<div class="section-title">${sec.title}</div>`;sec.questions.forEach((item,qi)=>{const key=`${cS}_${qi}`;h+=`<div class="question-block"><div class="q-label">Question ${qi+1}</div><div class="q-text">${item.q}</div>${item.hint?`<div class="q-hint">${item.hint}</div>`:''}<textarea placeholder="Notes de l'enquêteur..." oninput="answers['${key}']=this.value">${answers[key]||''}</textarea></div>`;});h+=`<div class="nav"><button class="btn btn-secondary" onclick="prev()">← Retour</button><button class="btn btn-primary" onclick="next()">Suivant →</button></div>`;c.innerHTML=h;}
+function renderClosing(g,c){let h=`<div class="section-title">Clôture — Profil final</div><div class="info-block">`;g.closing.forEach(f=>{h+=`<div class="info-field"><div class="info-label">${f.label}</div>`;if(f.type==='input'){h+=`<input type="text" value="${closingData[f.key]||''}" placeholder="${f.placeholder||''}" oninput="closingData['${f.key}']=this.value">`;}else if(f.type==='radio'){h+=`<div class="radio-group">`;f.options.forEach(o=>{const s=closingData[f.key]===o?'selected':'';h+=`<button class="radio-btn ${s}" onclick="pickClosing('${f.key}','${o}',this)">${o}</button>`;});h+=`</div>`;}else if(f.type==='score'){h+=`<div class="score-group">`;[1,2,3,4,5].forEach(n=>{const s=closingData[f.key]==n?'selected':'';h+=`<button class="score-btn ${s}" onclick="pickClosing('${f.key}',${n},this)">${n}</button>`;});h+=`</div>`;}else if(f.type==='textarea'){h+=`<textarea placeholder="Notes libres..." oninput="closingData['${f.key}']=this.value" style="min-height:60px">${closingData[f.key]||''}</textarea>`;}h+=`</div>`;});h+=`</div><div class="nav"><button class="btn btn-secondary" onclick="prev()">← Retour</button><button class="btn btn-success" onclick="next()">Terminer l'entretien ✓</button></div>`;c.innerHTML=h;}
+function pickClosing(k,v,el){closingData[k]=v;el.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');}
+
+function renderSummary(g,c){
+  let totalQ=0,answered=0;
+  g.sections.forEach((sec,si)=>{sec.questions.forEach((_,qi)=>{totalQ++;if(answers[`${si+1}_${qi}`]&&answers[`${si+1}_${qi}`].trim())answered++;});});
+  c.innerHTML=`
+    <div class="result-card">
+      <h3>Entretien terminé ✓</h3>
+      <div class="result-row">Guide <span class="badge">${g.name}</span></div>
+      <div class="result-row">Lieu : ${infoData.quartier||infoData.nom||'—'}</div>
+      <div class="result-row">Questions répondues : ${answered} / ${totalQ}</div>
+      <div class="result-row">Score motivation : ${closingData.score||'—'} / 5</div>
+      <div class="result-row">Contact : ${closingData.contact||'—'}</div>
+    </div>
+    <div id="status-msg"></div>
+    <div class="nav" style="margin-top:12px">
+      <button class="btn btn-secondary" onclick="newInterview()">Nouvel entretien</button>
+      <button class="btn btn-primary" id="btn-envoyer" onclick="envoyerDonnees(guides[cG])">Envoyer à MamaDoc</button>
+    </div>`;
+}
+
+async function envoyerDonnees(g){
+  const btn=document.getElementById('btn-envoyer');
+  const statusDiv=document.getElementById('status-msg');
+  btn.disabled=true;btn.textContent='Envoi en cours...';
+  statusDiv.innerHTML='<div class="status-box status-loading">Connexion au serveur MamaDoc...</div>';
+  const payload={
+    guide:g.name.toLowerCase().replace('-','_').replace(' ','_'),
+    quartier:infoData.quartier||infoData.nom||'',
+    date_entretien:infoData.date||'',
+    profil:infoData.profil||'',
+    telephone:infoData.tel||'',
+    score_motivation:closingData.score?parseInt(closingData.score):null,
+    contact_whatsapp:closingData.contact||'',
+    observations:closingData.obs||'',
+    reponses:answers
+  };
+  try{
+    const response=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(response.ok){
+      statusDiv.innerHTML='<div class="status-box status-ok">Entretien envoyé et enregistré dans MamaDoc ✓</div>';
+      btn.textContent='Envoyé ✓';btn.style.background='#0D3D25';
+    }else{
+      const err=await response.json();
+      statusDiv.innerHTML=`<div class="status-box status-err">Erreur : ${JSON.stringify(err)}</div>`;
+      btn.disabled=false;btn.textContent='Réessayer';
+    }
+  }catch(e){
+    statusDiv.innerHTML='<div class="status-box status-err">Serveur inaccessible — vérifie que Django tourne</div>';
+    btn.disabled=false;btn.textContent='Réessayer';
+  }
+}
+
+function newInterview(){answers={};infoData={};closingData={};cS=0;render();}
+function next(){cS=Math.min(cS+1,total());render();}
+function prev(){cS=Math.max(cS-1,0);render();}
+render();
+</script>
+</body>
+</html>
