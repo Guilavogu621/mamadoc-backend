@@ -21,3 +21,7 @@ def liste_entretiens(request):
     entretiens = Entretien.objects.all().order_by('-created_at')
     serializer = EntretienSerializer(entretiens, many=True)
     return Response(serializer.data)
+
+def dashboard_view(request):
+    entretiens = Entretien.objects.all().order_by('-created_at')
+    return render(request, 'dashboard.html', {'entretiens': entretiens})
