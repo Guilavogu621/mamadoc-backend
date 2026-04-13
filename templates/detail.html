@@ -26,6 +26,14 @@
         .q-key { font-size: 12px; color: #888; margin-bottom: 4px; }
         .a-text { font-size: 14px; line-height: 1.5; font-weight: 500; white-space: pre-wrap; }
         .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #E8F5EE; color: var(--primary); margin-bottom: 5px; }
+        .btn-print { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .btn-print:hover { opacity: 0.9; }
+        @media print {
+            .back-link, .btn-print, .header p { display: none !important; }
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
+            .section { page-break-inside: avoid; }
+        }
     </style>
 </head>
 <body>
@@ -36,7 +44,10 @@
                 <h1>Détails du Formulaire</h1>
                 <p style="font-size: 12px; color: #888;">ID: #{{ item.id }} — Reçu le {{ item.created_at|date:"d/m/Y à H:i" }}</p>
             </div>
-            <a href="{% url 'dashboard' %}" class="back-link">← Retour au Dashboard</a>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+                <a href="{% url 'dashboard' %}" class="back-link">← Retour au Dashboard</a>
+                <button onclick="window.print()" class="btn-print">💾 Télécharger / Imprimer</button>
+            </div>
         </div>
 
         <div class="section">
