@@ -25,3 +25,7 @@ def liste_entretiens(request):
 def dashboard_view(request):
     entretiens = Entretien.objects.all().order_by('-created_at')
     return render(request, 'dashboard.html', {'entretiens': entretiens})
+
+def entretien_detail_view(request, pk):
+    entretien = Entretien.objects.get(pk=pk)
+    return render(request, 'detail.html', {'item': entretien})

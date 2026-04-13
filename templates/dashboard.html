@@ -77,7 +77,7 @@
                         <td>{{ item.quartier|default:"—" }}</td>
                         <td><span class="score">{{ item.score_motivation|default:"—" }}</span>/5</td>
                         <td>{{ item.contact_whatsapp|default:"—" }}</td>
-                        <td><small title="{{ item.observations }}">{{ item.observations|truncatechars:30 }}</small></td>
+                        <td><a href="{% url 'entretien_detail' item.id %}" style="color: var(--primary); font-weight: 600; text-decoration: none;">Voir détails →</a></td>
                     </tr>
                     {% empty %}
                     <tr>

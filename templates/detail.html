@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails de l'Enquête — MamaDoc</title>
+    <style>
+        :root {
+            --primary: #1B7A4A;
+            --bg: #F4F7F5;
+            --white: #ffffff;
+            --border: #D6EAE0;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); padding: 20px; color: #333; }
+        .container { max-width: 700px; margin: 0 auto; background: var(--white); padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .header { border-bottom: 2px solid var(--border); margin-bottom: 25px; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { color: var(--primary); font-size: 22px; }
+        .back-link { text-decoration: none; color: #666; font-size: 14px; font-weight: 600; }
+        .section { margin-bottom: 25px; }
+        .section h2 { font-size: 16px; color: var(--primary); margin-bottom: 12px; border-left: 4px solid var(--primary); padding-left: 10px; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .info-item { background: #f9fbf9; padding: 10px; border-radius: 8px; border: 1px solid var(--border); }
+        .info-label { font-size: 11px; color: #888; text-transform: uppercase; font-weight: 600; }
+        .info-value { font-size: 14px; font-weight: 500; margin-top: 2px; }
+        .response-item { margin-bottom: 15px; padding: 12px; background: #fff; border: 1px solid var(--border); border-radius: 10px; }
+        .q-key { font-size: 12px; color: #888; margin-bottom: 4px; }
+        .a-text { font-size: 14px; line-height: 1.5; font-weight: 500; white-space: pre-wrap; }
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #E8F5EE; color: var(--primary); margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <span class="badge">{{ item.get_guide_display }}</span>
+                <h1>Détails du Formulaire</h1>
+                <p style="font-size: 12px; color: #888;">ID: #{{ item.id }} — Reçu le {{ item.created_at|date:"d/m/Y à H:i" }}</p>
+            </div>
+            <a href="{% url 'dashboard' %}" class="back-link">← Retour au Dashboard</a>
+        </div>
+
+        <div class="section">
+            <h2>Informations Générales</h2>
+            <div class="info-grid">
+                <div class="info-item"><div class="info-label">Quartier / Lieu</div><div class="info-value">{{ item.quartier|default:"—" }}</div></div>
+                <div class="info-item"><div class="info-label">Contact WhatsApp</div><div class="info-value">{{ item.contact_whatsapp|default:"—" }}</div></div>
+                <div class="info-item"><div class="info-label">Profil</div><div class="info-value">{{ item.profil|default:"—" }}</div></div>
+                <div class="info-item"><div class="info-label">Score Motivation</div><div class="info-value">{{ item.score_motivation|default:"—" }}/5</div></div>
+            </div>
+        </div>
+
+        {% if item.observations %}
+        <div class="section">
+            <h2>Observations de l'Enquêteur</h2>
+            <div class="response-item" style="background: #FFF8E1; border-color: #FFECB3;">
+                <div class="a-text">{{ item.observations }}</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="section">
+            <h2>Réponses au Guide d'Entretien</h2>
+            {% if item.reponses %}
+                {% for key, val in item.reponses.items %}
+                <div class="response-item">
+                    <div class="q-key">Réponse Question {{ key }}</div>
+                    <div class="a-text">{{ val|default:"(Pas de réponse)" }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: #888; font-style: italic;">Aucune réponse détaillée enregistrée.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
